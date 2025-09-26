@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { IdeaCard, type Idea } from "./IdeaCard";
+import { IdeaTable } from "./IdeaTable";
+import { type Idea } from "./IdeaCard";
 import { Search, Filter, Plus, TrendingUp, Clock, CheckCircle2 } from "lucide-react";
 
 interface IdeaDashboardProps {
@@ -217,38 +218,17 @@ export function IdeaDashboard({ ideas, onVoteForIdea, votedIdeas, remainingVotes
         )}
       </Card>
 
-      {/* Ideas Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredAndSortedIdeas.map((idea) => (
-          <IdeaCard
-            key={idea.id}
-            idea={idea}
-            onVote={onVoteForIdea}
-            hasVotedFor={votedIdeas.has(idea.id)}
-            remainingVotes={remainingVotes}
-          />
-        ))}
-      </div>
-
-      {filteredAndSortedIdeas.length === 0 && (
-        <Card className="p-8 text-center">
-          <div className="max-w-md mx-auto">
-            <div className="p-3 bg-muted/20 rounded-full w-fit mx-auto mb-4">
-              <Search className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <h3 className="text-lg font-medium mb-2">No ideas found</h3>
-            <p className="text-muted-foreground mb-4">
-              {searchTerm || statusFilter !== "all" || categoryFilter !== "all"
-                ? "Try adjusting your filters or search terms."
-                : "Be the first to submit an innovative idea!"}
-            </p>
-            <Button onClick={onOpenSubmissionForm} variant="outline">
-              <Plus className="h-4 w-4 mr-2" />
-              Submit First Idea
-            </Button>
-          </div>
-        </Card>
-      )}
+      {/* Ideas Table */}
+      <IdeaTable
+        ideas={filteredAndSortedIdeas}
+        onVote={onVoteForIdea}
+        votedIdeas={votedIdeas}
+        remainingVotes={remainingVotes}
+        onOpenSubmissionForm={onOpenSubmissionForm}
+        searchTerm={searchTerm}
+        statusFilter={statusFilter}
+        categoryFilter={categoryFilter}
+      />
     </div>
   );
 }
