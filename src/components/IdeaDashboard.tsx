@@ -1,0 +1,254 @@
+import { useState, useMemo } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { IdeaCard, type Idea } from "./IdeaCard";
+import { Search, Filter, Plus, TrendingUp, Clock, CheckCircle2 } from "lucide-react";
+
+interface IdeaDashboardProps {
+  ideas: Idea[];
+  onVoteForIdea: (ideaId: string) => void;
+  votedIdeas: Set<string>;
+  remainingVotes: number;
+  onOpenSubmissionForm: () => void;
+}
+
+export function IdeaDashboard({ ideas, onVoteForIdea, votedIdeas, remainingVotes, onOpenSubmissionForm }: IdeaDashboardProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("newest");
+
+  const filteredAndSortedIdeas = useMemo(() => {
+    let filtered = ideas.filter(idea => {
+      const matchesSearch = idea.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          idea.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === "all" || idea.status === statusFilter;
+      const matchesCategory = categoryFilter === "all" || idea.category === categoryFilter;
+      
+      return matchesSearch && matchesStatus && matchesCategory;
+    });
+
+    // Sort ideas
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "votes":
+          return b.votes - a.votes;
+        case "oldest":
+          return new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime();
+        case "newest":
+        default:
+          return new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime();
+      }
+    });
+
+    return filtered;
+  }, [ideas, searchTerm, statusFilter, categoryFilter, sortBy]);
+
+  const categories = [...new Set(ideas.map(idea => idea.category))];
+  const statuses = [...new Set(ideas.map(idea => idea.status))];
+
+  const stats = {
+    total: ideas.length,
+    inProgress: ideas.filter(idea => idea.status === "Development In Progress").length,
+    released: ideas.filter(idea => idea.status === "Released").length,
+    totalVotes: ideas.reduce((sum, idea) => sum + idea.votes, 0)
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header with Stats */}
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Idea Box
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Community-driven innovation hub • {remainingVotes} votes remaining this quarter
+          </p>
+        </div>
+        
+        <Button onClick={onOpenSubmissionForm} className="bg-primary hover:bg-primary-dark">
+          <Plus className="h-4 w-4 mr-2" />
+          Submit New Idea
+        </Button>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="p-4">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <TrendingUp className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{stats.total}</p>
+              <p className="text-xs text-muted-foreground">Total Ideas</p>
+            </div>
+          </div>
+        </Card>
+        
+        <Card className="p-4">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-status-progress/10 rounded-lg">
+              <Clock className="h-4 w-4 text-status-progress" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{stats.inProgress}</p>
+              <p className="text-xs text-muted-foreground">In Progress</p>
+            </div>
+          </div>
+        </Card>
+        
+        <Card className="p-4">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-status-released/10 rounded-lg">
+              <CheckCircle2 className="h-4 w-4 text-status-released" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{stats.released}</p>
+              <p className="text-xs text-muted-foreground">Released</p>
+            </div>
+          </div>
+        </Card>
+        
+        <Card className="p-4">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-secondary/10 rounded-lg">
+              <TrendingUp className="h-4 w-4 text-secondary" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{stats.totalVotes}</p>
+              <p className="text-xs text-muted-foreground">Total Votes</p>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Filters and Search */}
+      <Card className="p-4">
+        <div className="flex flex-col lg:flex-row gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search ideas by title or description..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          
+          <div className="flex gap-2">
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                {statuses.map(status => (
+                  <SelectItem key={status} value={status}>{status}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Filter by category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map(category => (
+                  <SelectItem key={category} value={category}>{category}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-32">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest</SelectItem>
+                <SelectItem value="oldest">Oldest</SelectItem>
+                <SelectItem value="votes">Most Votes</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        
+        {(searchTerm || statusFilter !== "all" || categoryFilter !== "all") && (
+          <div className="flex flex-wrap gap-2 mt-3">
+            {searchTerm && (
+              <Badge variant="secondary">
+                Search: "{searchTerm}"
+                <button
+                  onClick={() => setSearchTerm("")}
+                  className="ml-1 hover:bg-destructive/20 rounded-full p-0.5"
+                >
+                  ×
+                </button>
+              </Badge>
+            )}
+            {statusFilter !== "all" && (
+              <Badge variant="secondary">
+                Status: {statusFilter}
+                <button
+                  onClick={() => setStatusFilter("all")}
+                  className="ml-1 hover:bg-destructive/20 rounded-full p-0.5"
+                >
+                  ×
+                </button>
+              </Badge>
+            )}
+            {categoryFilter !== "all" && (
+              <Badge variant="secondary">
+                Category: {categoryFilter}
+                <button
+                  onClick={() => setCategoryFilter("all")}
+                  className="ml-1 hover:bg-destructive/20 rounded-full p-0.5"
+                >
+                  ×
+                </button>
+              </Badge>
+            )}
+          </div>
+        )}
+      </Card>
+
+      {/* Ideas Grid */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {filteredAndSortedIdeas.map((idea) => (
+          <IdeaCard
+            key={idea.id}
+            idea={idea}
+            onVote={onVoteForIdea}
+            hasVotedFor={votedIdeas.has(idea.id)}
+            remainingVotes={remainingVotes}
+          />
+        ))}
+      </div>
+
+      {filteredAndSortedIdeas.length === 0 && (
+        <Card className="p-8 text-center">
+          <div className="max-w-md mx-auto">
+            <div className="p-3 bg-muted/20 rounded-full w-fit mx-auto mb-4">
+              <Search className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-medium mb-2">No ideas found</h3>
+            <p className="text-muted-foreground mb-4">
+              {searchTerm || statusFilter !== "all" || categoryFilter !== "all"
+                ? "Try adjusting your filters or search terms."
+                : "Be the first to submit an innovative idea!"}
+            </p>
+            <Button onClick={onOpenSubmissionForm} variant="outline">
+              <Plus className="h-4 w-4 mr-2" />
+              Submit First Idea
+            </Button>
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+}

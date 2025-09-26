@@ -21,11 +21,21 @@ export default {
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
+          light: "hsl(var(--primary-light))",
+          dark: "hsl(var(--primary-dark))",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
+          light: "hsl(var(--secondary-light))",
           foreground: "hsl(var(--secondary-foreground))",
+        },
+        status: {
+          review: "hsl(var(--status-review))",
+          planned: "hsl(var(--status-planned))",
+          progress: "hsl(var(--status-progress))",
+          released: "hsl(var(--status-released))",
+          revisit: "hsl(var(--status-revisit))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
