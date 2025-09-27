@@ -238,9 +238,16 @@ const Index = () => {
               </div>
               <div>
                 <h1 className="text-xl font-bold">Idea Box</h1>
-                <p className="text-xs text-muted-foreground">
-                  Submit ideas • {quarterInfo.currentQuarter} • {remainingVotes}/{quarterInfo.totalVotes} votes left
-                </p>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-muted-foreground">{quarterInfo.currentQuarter}</span>
+                  <span className="text-muted-foreground">•</span>
+                  <div className="flex items-center gap-1 px-2 py-0.5 bg-primary/10 rounded-full border border-primary/20">
+                    <div className={`w-2 h-2 rounded-full ${remainingVotes > 2 ? 'bg-green-500' : remainingVotes > 0 ? 'bg-yellow-500 animate-pulse' : 'bg-red-500'}`}></div>
+                    <span className={`font-medium ${remainingVotes > 2 ? 'text-green-700' : remainingVotes > 0 ? 'text-yellow-700' : 'text-red-700'}`}>
+                      {remainingVotes} votes left
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -257,7 +264,7 @@ const Index = () => {
             </TabsTrigger>
             <TabsTrigger value="ideas" className="flex items-center gap-2">
               <List className="h-4 w-4" />
-              Browse Ideas
+              View Other Ideas
             </TabsTrigger>
           </TabsList>
           
