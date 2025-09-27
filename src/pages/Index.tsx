@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { IdeaDashboard } from "@/components/IdeaDashboard";
-import { IdeaSubmissionForm } from "@/components/IdeaSubmissionForm";
+import { IdeaSubmissionFormTab } from "@/components/IdeaSubmissionFormTab";
 import { useVotingSystem } from "@/hooks/useVotingSystem";
 import { type Idea } from "@/components/IdeaCard";
 import { Button } from "@/components/ui/button";
-import { Lightbulb, Github, Twitter } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Lightbulb, Github, Twitter, Plus, List } from "lucide-react";
 
 // Mock data for demonstration
 const mockIdeas: Idea[] = [
@@ -191,7 +192,6 @@ const mockIdeas: Idea[] = [
 
 const Index = () => {
   const [ideas, setIdeas] = useState<Idea[]>(mockIdeas);
-  const [isSubmissionFormOpen, setIsSubmissionFormOpen] = useState(false);
   const { votedIdeas, remainingVotes, voteForIdea, getQuarterInfo } = useVotingSystem();
 
   const handleSubmitIdea = (newIdeaData: Omit<Idea, "id" | "votes" | "submittedAt" | "status">) => {
@@ -243,30 +243,38 @@ const Index = () => {
                 </p>
               </div>
             </div>
-            
-            <div className="flex items-center gap-2">
-              <Button
-                onClick={() => setIsSubmissionFormOpen(true)}
-                size="sm"
-                className="bg-primary hover:bg-primary-dark"
-              >
-                <Lightbulb className="h-4 w-4 mr-2" />
-                Submit Idea
-              </Button>
-            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <IdeaDashboard
-          ideas={ideas}
-          onVoteForIdea={handleVoteForIdea}
-          votedIdeas={votedIdeas}
-          remainingVotes={remainingVotes}
-          onOpenSubmissionForm={() => setIsSubmissionFormOpen(true)}
-        />
+        <Tabs defaultValue="ideas" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="ideas" className="flex items-center gap-2">
+              <List className="h-4 w-4" />
+              View Ideas
+            </TabsTrigger>
+            <TabsTrigger value="submit" className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Submit Idea
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="ideas" className="mt-6">
+            <IdeaDashboard
+              ideas={ideas}
+              onVoteForIdea={handleVoteForIdea}
+              votedIdeas={votedIdeas}
+              remainingVotes={remainingVotes}
+              onOpenSubmissionForm={() => {}}
+            />
+          </TabsContent>
+          
+          <TabsContent value="submit" className="mt-6">
+            <IdeaSubmissionFormTab onSubmit={handleSubmitIdea} />
+          </TabsContent>
+        </Tabs>
       </main>
 
       {/* Footer */}
@@ -284,17 +292,9 @@ const Index = () => {
             </div>
             
             <div className="flex flex-col items-center gap-2">
-              <Button
-                onClick={() => setIsSubmissionFormOpen(true)}
-                variant="outline"
-                size="sm"
-                className="border-primary/20 hover:bg-primary/5"
-              >
-                <Lightbulb className="h-4 w-4 mr-2" />
-                Submit an Idea
-              </Button>
+              <p className="text-sm font-medium">Community Innovation Platform</p>
               <p className="text-xs text-muted-foreground text-center">
-                Have a great idea? Share it with our community!
+                Share ideas, vote on features, and help shape our product roadmap
               </p>
             </div>
 
@@ -311,12 +311,6 @@ const Index = () => {
         </div>
       </footer>
 
-      {/* Submission Form Modal */}
-      <IdeaSubmissionForm
-        isOpen={isSubmissionFormOpen}
-        onClose={() => setIsSubmissionFormOpen(false)}
-        onSubmit={handleSubmitIdea}
-      />
     </div>
   );
 };
