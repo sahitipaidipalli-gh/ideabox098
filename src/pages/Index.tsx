@@ -5,7 +5,7 @@ import { useVotingSystem } from "@/hooks/useVotingSystem";
 import { type Idea } from "@/components/IdeaCard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Lightbulb, Github, Twitter, Plus, List } from "lucide-react";
+import { Lightbulb, Github, Twitter, Plus, List, Sparkles } from "lucide-react";
 
 // Mock data for demonstration
 const mockIdeas: Idea[] = [
@@ -239,7 +239,7 @@ const Index = () => {
               <div>
                 <h1 className="text-xl font-bold">Idea Box</h1>
                 <p className="text-xs text-muted-foreground">
-                  {quarterInfo.currentQuarter} • {remainingVotes}/{quarterInfo.totalVotes} votes left
+                  Submit ideas • {quarterInfo.currentQuarter} • {remainingVotes}/{quarterInfo.totalVotes} votes left
                 </p>
               </div>
             </div>
@@ -249,19 +249,31 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="ideas" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+        <Tabs defaultValue="submit" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="submit" className="flex items-center gap-2 bg-primary/10 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Plus className="h-4 w-4" />
+              Submit Your Idea
+            </TabsTrigger>
             <TabsTrigger value="ideas" className="flex items-center gap-2">
               <List className="h-4 w-4" />
-              View Ideas
-            </TabsTrigger>
-            <TabsTrigger value="submit" className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Submit Idea
+              Browse Ideas
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="ideas" className="mt-6">
+          <TabsContent value="submit" className="mt-0 animate-fade-in">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
+                Share Your Innovation
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Your ideas drive our product forward. Submit your suggestion and help shape the future of our platform.
+              </p>
+            </div>
+            <IdeaSubmissionFormTab onSubmit={handleSubmitIdea} />
+          </TabsContent>
+          
+          <TabsContent value="ideas" className="mt-0 animate-fade-in">
             <IdeaDashboard
               ideas={ideas}
               onVoteForIdea={handleVoteForIdea}
@@ -269,10 +281,6 @@ const Index = () => {
               remainingVotes={remainingVotes}
               onOpenSubmissionForm={() => {}}
             />
-          </TabsContent>
-          
-          <TabsContent value="submit" className="mt-6">
-            <IdeaSubmissionFormTab onSubmit={handleSubmitIdea} />
           </TabsContent>
         </Tabs>
       </main>
@@ -292,9 +300,9 @@ const Index = () => {
             </div>
             
             <div className="flex flex-col items-center gap-2">
-              <p className="text-sm font-medium">Community Innovation Platform</p>
+              <p className="text-sm font-medium">💡 Innovation Starts Here</p>
               <p className="text-xs text-muted-foreground text-center">
-                Share ideas, vote on features, and help shape our product roadmap
+                Every great feature began as someone's idea - yours could be next!
               </p>
             </div>
 
