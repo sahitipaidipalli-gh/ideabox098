@@ -147,8 +147,8 @@ export function IdeaTable({ ideas, onVote, votedIdeas, remainingVotes, onOpenSub
                 </TableCell>
                 
                 <TableCell>
-                  <Badge variant={idea.usageFrequency === "High" ? "default" : "secondary"} className="text-xs">
-                    {idea.usageFrequency}
+                  <Badge variant={idea.usage_frequency === "High" ? "default" : "secondary"} className="text-xs">
+                    {idea.usage_frequency}
                   </Badge>
                 </TableCell>
                 
