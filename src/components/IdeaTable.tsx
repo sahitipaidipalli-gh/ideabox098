@@ -8,7 +8,7 @@ import { type IdeaWithVotes } from "@/lib/supabase";
 
 interface IdeaTableProps {
   ideas: IdeaWithVotes[];
-  onVote: (ideaId: string) => void;
+  onVote: (ideaId: string) => Promise<boolean | void>;
   votedIdeas: Set<string>;
   remainingVotes: number;
   onOpenSubmissionForm?: () => void;
@@ -43,14 +43,15 @@ export function IdeaTable({ ideas, onVote, votedIdeas, remainingVotes, onOpenSub
     if (votedIdeas.has(ideaId) || remainingVotes <= 0) return;
     
     setVotingStates(prev => new Set(prev).add(ideaId));
-    setTimeout(() => {
-      onVote(ideaId);
+    try {
+      await onVote(ideaId);
+    } finally {
       setVotingStates(prev => {
         const newSet = new Set(prev);
         newSet.delete(ideaId);
         return newSet;
       });
-    }, 300);
+    }
   };
 
   return (

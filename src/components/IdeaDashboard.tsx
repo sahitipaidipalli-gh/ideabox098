@@ -5,22 +5,25 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { IdeaTable } from "./IdeaTable";
+import { IdeaGrid } from "./IdeaGrid";
 import { type IdeaWithVotes } from "@/lib/supabase";
-import { Search, Filter, Plus, TrendingUp, Clock, CheckCircle2 } from "lucide-react";
+import { Search, Filter, Plus, TrendingUp, Clock, CheckCircle2, Grid, List } from "lucide-react";
 
 interface IdeaDashboardProps {
   ideas: IdeaWithVotes[];
-  onVoteForIdea: (ideaId: string) => void;
+  onVoteForIdea: (ideaId: string) => Promise<boolean | void>;
+  onUnvoteForIdea?: (ideaId: string) => Promise<boolean | void>;
   votedIdeas: Set<string>;
   remainingVotes: number;
   onOpenSubmissionForm: () => void;
 }
 
-export function IdeaDashboard({ ideas, onVoteForIdea, votedIdeas, remainingVotes, onOpenSubmissionForm }: IdeaDashboardProps) {
+export function IdeaDashboard({ ideas, onVoteForIdea, onUnvoteForIdea, votedIdeas, remainingVotes, onOpenSubmissionForm }: IdeaDashboardProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
+  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
 
   const filteredAndSortedIdeas = useMemo(() => {
     let filtered = ideas.filter(idea => {
@@ -176,6 +179,25 @@ export function IdeaDashboard({ ideas, onVoteForIdea, votedIdeas, remainingVotes
                 <SelectItem value="votes">Most Votes</SelectItem>
               </SelectContent>
             </Select>
+            
+            <div className="flex bg-muted/20 rounded-lg p-1">
+              <Button
+                variant={viewMode === "table" ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("table")}
+                className="px-3"
+              >
+                <List className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === "grid" ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("grid")}
+                className="px-3"
+              >
+                <Grid className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
         
@@ -218,17 +240,36 @@ export function IdeaDashboard({ ideas, onVoteForIdea, votedIdeas, remainingVotes
         )}
       </Card>
 
-      {/* Ideas Table */}
-      <IdeaTable
-        ideas={filteredAndSortedIdeas}
-        onVote={onVoteForIdea}
-        votedIdeas={votedIdeas}
-        remainingVotes={remainingVotes}
-        onOpenSubmissionForm={onOpenSubmissionForm}
-        searchTerm={searchTerm}
-        statusFilter={statusFilter}
-        categoryFilter={categoryFilter}
-      />
+      {/* Ideas Display */}
+      {viewMode === "table" ? (
+        <IdeaTable
+          ideas={filteredAndSortedIdeas}
+          onVote={onVoteForIdea}
+          votedIdeas={votedIdeas}
+          remainingVotes={remainingVotes}
+          onOpenSubmissionForm={onOpenSubmissionForm}
+          searchTerm={searchTerm}
+          statusFilter={statusFilter}
+          categoryFilter={categoryFilter}
+        />
+      ) : (
+        <IdeaGrid
+          ideas={filteredAndSortedIdeas}
+          onVote={async (ideaId) => {
+            const result = await onVoteForIdea(ideaId);
+            return result !== false;
+          }}
+          onUnvote={async (ideaId) => {
+            if (onUnvoteForIdea) {
+              const result = await onUnvoteForIdea(ideaId);
+              return result !== false;
+            }
+            return false;
+          }}
+          votedIdeas={votedIdeas}
+          remainingVotes={remainingVotes}
+        />
+      )}
     </div>
   );
 }
