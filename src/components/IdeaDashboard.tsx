@@ -5,11 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { IdeaTable } from "./IdeaTable";
-import { type Idea } from "./IdeaCard";
+import { type IdeaWithVotes } from "@/lib/supabase";
 import { Search, Filter, Plus, TrendingUp, Clock, CheckCircle2 } from "lucide-react";
 
 interface IdeaDashboardProps {
-  ideas: Idea[];
+  ideas: IdeaWithVotes[];
   onVoteForIdea: (ideaId: string) => void;
   votedIdeas: Set<string>;
   remainingVotes: number;
@@ -38,10 +38,10 @@ export function IdeaDashboard({ ideas, onVoteForIdea, votedIdeas, remainingVotes
         case "votes":
           return b.votes - a.votes;
         case "oldest":
-          return new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime();
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
         case "newest":
         default:
-          return new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime();
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
       }
     });
 

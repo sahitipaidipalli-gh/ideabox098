@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowUp, Clock, User, Tag, ChevronDown, ChevronUp, Search, Plus } from "lucide-react";
 import { useState } from "react";
-import { type Idea } from "./IdeaCard";
+import { type IdeaWithVotes } from "@/lib/supabase";
 
 interface IdeaTableProps {
-  ideas: Idea[];
+  ideas: IdeaWithVotes[];
   onVote: (ideaId: string) => void;
   votedIdeas: Set<string>;
   remainingVotes: number;
@@ -154,14 +154,14 @@ export function IdeaTable({ ideas, onVote, votedIdeas, remainingVotes, onOpenSub
                 
                 <TableCell>
                   <div className="text-sm space-y-1">
-                    <div className="flex items-center gap-1 text-muted-foreground">
-                      <User className="h-3 w-3" />
-                      <span className="truncate">{idea.submittedBy}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Clock className="h-3 w-3" />
-                      <span>{new Date(idea.submittedAt).toLocaleDateString()}</span>
-                    </div>
+                     <div className="flex items-center gap-1 text-muted-foreground">
+                       <User className="h-3 w-3" />
+                       <span className="truncate">{idea.submitted_by || 'Anonymous'}</span>
+                     </div>
+                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                       <Clock className="h-3 w-3" />
+                       <span>{new Date(idea.created_at).toLocaleDateString()}</span>
+                     </div>
                   </div>
                 </TableCell>
               </TableRow>

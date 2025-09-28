@@ -2,23 +2,27 @@ import { useState } from "react";
 import { IdeaDashboard } from "@/components/IdeaDashboard";
 import { IdeaSubmissionFormTab } from "@/components/IdeaSubmissionFormTab";
 import { useVotingSystem } from "@/hooks/useVotingSystem";
-import { type Idea } from "@/components/IdeaCard";
+import { type IdeaWithVotes } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Lightbulb, Github, Twitter, Plus, List, Sparkles } from "lucide-react";
 
-// Mock data for demonstration
-const mockIdeas: Idea[] = [
+// Mock data for demonstration  
+const mockIdeas: IdeaWithVotes[] = [
   {
     id: "1",
     title: "Dark Mode Toggle",
     description: "Add a dark mode option to improve user experience during night time usage. This would help reduce eye strain and provide better accessibility.",
     category: "User Interface",
-    usageFrequency: "High",
+    usage_frequency: "High",
     status: "Development In Progress",
     votes: 24,
-    submittedBy: "Sarah Chen",
-    submittedAt: "2024-01-15T10:30:00Z",
+    submitted_by: "Sarah Chen",
+    submitted_by_company: "Tech Corp",
+    created_at: "2024-01-15T10:30:00Z",
+    updated_at: "2024-01-15T10:30:00Z",
+    created_by: "user1",
+    voters: [],
     notes: "Development started. Expected completion in Q2 2024."
   },
   {
@@ -26,11 +30,15 @@ const mockIdeas: Idea[] = [
     title: "Real-time Collaboration",
     description: "Enable multiple users to work on the same document simultaneously with live cursor tracking and change highlighting.",
     category: "New Feature",
-    usageFrequency: "High",
+    usage_frequency: "High",
     status: "Planned in Q4",
     votes: 18,
-    submittedBy: "Marcus Johnson",
-    submittedAt: "2024-01-12T14:20:00Z",
+    submitted_by: "Marcus Johnson",
+    submitted_by_company: "StartupXYZ",
+    created_at: "2024-01-12T14:20:00Z",
+    updated_at: "2024-01-12T14:20:00Z",
+    created_by: "user2",
+    voters: [],
     notes: "High priority feature. Architecture planning in progress."
   },
   {
@@ -38,11 +46,15 @@ const mockIdeas: Idea[] = [
     title: "Mobile App Performance",
     description: "Optimize the mobile application to reduce loading times and improve responsiveness on older devices.",
     category: "Performance",
-    usageFrequency: "High",
+    usage_frequency: "High",
     status: "Released",
     votes: 31,
-    submittedBy: "Elena Rodriguez", 
-    submittedAt: "2023-12-08T09:15:00Z",
+    submitted_by: "Elena Rodriguez",
+    submitted_by_company: "Mobile Inc", 
+    created_at: "2023-12-08T09:15:00Z",
+    updated_at: "2023-12-08T09:15:00Z",
+    created_by: "user3",
+    voters: [],
     notes: "Completed! App performance improved by 40% on average."
   },
   {
@@ -50,22 +62,31 @@ const mockIdeas: Idea[] = [
     title: "Advanced Search Filters",
     description: "Add more granular search filters including date ranges, custom tags, and advanced boolean operations.",
     category: "User Interface",
-    usageFrequency: "Low",
+    usage_frequency: "Low",
     status: "Under Review",
     votes: 12,
-    submittedBy: "David Kim",
-    submittedAt: "2024-01-18T16:45:00Z"
+    submitted_by: "David Kim",
+    submitted_by_company: "SearchCo",
+    created_at: "2024-01-18T16:45:00Z",
+    updated_at: "2024-01-18T16:45:00Z",
+    created_by: "user4",
+    voters: [],
+    notes: null
   },
   {
     id: "5",
     title: "API Rate Limiting",
     description: "Implement intelligent rate limiting to prevent abuse while maintaining good user experience for legitimate usage.",
     category: "Security",
-    usageFrequency: "Low", 
+    usage_frequency: "Low", 
     status: "Will be revisited later",
     votes: 8,
-    submittedBy: "Alex Thompson",
-    submittedAt: "2024-01-10T11:30:00Z",
+    submitted_by: "Alex Thompson",
+    submitted_by_company: "SecureTech",
+    created_at: "2024-01-10T11:30:00Z",
+    updated_at: "2024-01-10T11:30:00Z",
+    created_by: "user5",
+    voters: [],
     notes: "Lower priority. Will revisit after core features are completed."
   },
   {
@@ -73,11 +94,15 @@ const mockIdeas: Idea[] = [
     title: "Single Sign-On Integration",
     description: "Add support for SSO providers like Google, Microsoft, and Okta to streamline user authentication for enterprise customers.",
     category: "Security",
-    usageFrequency: "High",
+    usage_frequency: "High",
     status: "Development In Progress",
     votes: 29,
-    submittedBy: "Jennifer Walsh",
-    submittedAt: "2024-01-20T09:15:00Z",
+    submitted_by: "Jennifer Walsh",
+    submitted_by_company: "Enterprise Corp",
+    created_at: "2024-01-20T09:15:00Z",
+    updated_at: "2024-01-20T09:15:00Z",
+    created_by: "user6",
+    voters: [],
     notes: "Integration with Google and Microsoft completed. Okta support in progress."
   },
   {
@@ -85,11 +110,15 @@ const mockIdeas: Idea[] = [
     title: "Bulk Data Export",
     description: "Allow users to export large datasets in various formats (CSV, JSON, Excel) with progress tracking and email notifications.",
     category: "Analytics",
-    usageFrequency: "High",
+    usage_frequency: "High",
     status: "Released",
     votes: 22,
-    submittedBy: "Robert Kim",
-    submittedAt: "2023-11-30T14:22:00Z",
+    submitted_by: "Robert Kim",
+    submitted_by_company: "DataFlow Inc",
+    created_at: "2023-11-30T14:22:00Z",
+    updated_at: "2023-11-30T14:22:00Z",
+    created_by: "user7",
+    voters: [],
     notes: "Successfully released with support for CSV, JSON, and Excel formats."
   },
   {
@@ -97,11 +126,15 @@ const mockIdeas: Idea[] = [
     title: "Keyboard Shortcuts",
     description: "Implement comprehensive keyboard shortcuts for power users to navigate and perform actions more efficiently.",
     category: "User Interface",
-    usageFrequency: "Low",
+    usage_frequency: "Low",
     status: "Under Review",
     votes: 15,
-    submittedBy: "Lisa Park",
-    submittedAt: "2024-01-22T11:45:00Z",
+    submitted_by: "Lisa Park",
+    submitted_by_company: "UX Studio",
+    created_at: "2024-01-22T11:45:00Z",
+    updated_at: "2024-01-22T11:45:00Z",
+    created_by: "user8",
+    voters: [],
     notes: "UX team reviewing shortcut patterns and accessibility implications."
   },
   {
@@ -109,11 +142,15 @@ const mockIdeas: Idea[] = [
     title: "Webhook Integration",
     description: "Add webhook support to allow real-time notifications to external systems when certain events occur in the platform.",
     category: "Integration",
-    usageFrequency: "Low",
+    usage_frequency: "Low",
     status: "Planned in Q4",
     votes: 14,
-    submittedBy: "Michael Torres",
-    submittedAt: "2024-01-05T16:30:00Z",
+    submitted_by: "Michael Torres",
+    submitted_by_company: "IntegrationHub",
+    created_at: "2024-01-05T16:30:00Z",
+    updated_at: "2024-01-05T16:30:00Z",
+    created_by: "user9",
+    voters: [],
     notes: "Approved for Q4 roadmap. Technical specification in draft phase."
   },
   {
@@ -121,11 +158,15 @@ const mockIdeas: Idea[] = [
     title: "Offline Mode Support",
     description: "Enable core functionality to work offline with automatic sync when connection is restored, especially useful for mobile users.",
     category: "Mobile Experience",
-    usageFrequency: "High",
+    usage_frequency: "High",
     status: "Will be revisited later",
     votes: 35,
-    submittedBy: "Anna Schmidt",
-    submittedAt: "2023-12-15T13:20:00Z",
+    submitted_by: "Anna Schmidt",
+    submitted_by_company: "MobileFirst",
+    created_at: "2023-12-15T13:20:00Z",
+    updated_at: "2023-12-15T13:20:00Z",
+    created_by: "user10",
+    voters: [],
     notes: "High vote count noted. Requires significant architecture changes - will revisit in 2025."
   },
   {
@@ -133,11 +174,15 @@ const mockIdeas: Idea[] = [
     title: "Custom Dashboard Widgets",
     description: "Allow users to create and customize dashboard widgets with drag-and-drop functionality and real-time data visualization.",
     category: "Analytics",
-    usageFrequency: "High",
+    usage_frequency: "High",
     status: "Development In Progress",
     votes: 27,
-    submittedBy: "James Wilson",
-    submittedAt: "2024-01-08T10:12:00Z",
+    submitted_by: "James Wilson",
+    submitted_by_company: "DashTech",
+    created_at: "2024-01-08T10:12:00Z",
+    updated_at: "2024-01-08T10:12:00Z",
+    created_by: "user11",
+    voters: [],
     notes: "Frontend components completed. Backend API integration in progress."
   },
   {
@@ -145,11 +190,15 @@ const mockIdeas: Idea[] = [
     title: "Two-Factor Authentication",
     description: "Implement 2FA support with SMS, email, and authenticator app options to enhance account security.",
     category: "Security",
-    usageFrequency: "High",
+    usage_frequency: "High",
     status: "Released",
     votes: 41,
-    submittedBy: "Maria Gonzalez",
-    submittedAt: "2023-10-25T15:45:00Z",
+    submitted_by: "Maria Gonzalez",
+    submitted_by_company: "SecureAuth",
+    created_at: "2023-10-25T15:45:00Z",
+    updated_at: "2023-10-25T15:45:00Z",
+    created_by: "user12",
+    voters: [],
     notes: "Fully implemented with support for SMS, email, and TOTP authenticator apps."
   },
   {
@@ -157,11 +206,15 @@ const mockIdeas: Idea[] = [
     title: "Team Collaboration Spaces",
     description: "Create dedicated spaces where team members can collaborate on projects with shared resources and communication tools.",
     category: "New Feature",
-    usageFrequency: "High",
+    usage_frequency: "High",
     status: "Planned in Q4",
     votes: 33,
-    submittedBy: "Chris Anderson",
-    submittedAt: "2024-01-25T12:30:00Z",
+    submitted_by: "Chris Anderson",
+    submitted_by_company: "TeamWork LLC",
+    created_at: "2024-01-25T12:30:00Z",
+    updated_at: "2024-01-25T12:30:00Z",
+    created_by: "user13",
+    voters: [],
     notes: "Feature approved for Q4. User research completed, design phase starting soon."
   },
   {
@@ -169,11 +222,15 @@ const mockIdeas: Idea[] = [
     title: "Performance Analytics Dashboard",
     description: "Provide detailed analytics on application performance, user behavior, and system metrics for administrators.",
     category: "Analytics",
-    usageFrequency: "Low",
+    usage_frequency: "Low",
     status: "Under Review",
     votes: 11,
-    submittedBy: "Patricia Lee",
-    submittedAt: "2024-01-28T08:55:00Z",
+    submitted_by: "Patricia Lee",
+    submitted_by_company: "Analytics Pro",
+    created_at: "2024-01-28T08:55:00Z",
+    updated_at: "2024-01-28T08:55:00Z",
+    created_by: "user14",
+    voters: [],
     notes: "Product team evaluating requirements and scope. May combine with existing analytics features."
   },
   {
@@ -181,26 +238,36 @@ const mockIdeas: Idea[] = [
     title: "Voice Commands",
     description: "Add voice command support for accessibility and hands-free operation using modern speech recognition APIs.",
     category: "User Interface",
-    usageFrequency: "Low",
+    usage_frequency: "Low",
     status: "Will be revisited later",
     votes: 9,
-    submittedBy: "Daniel Brown",
-    submittedAt: "2024-01-02T17:20:00Z",
+    submitted_by: "Daniel Brown",
+    submitted_by_company: "VoiceUI Inc",
+    created_at: "2024-01-02T17:20:00Z",
+    updated_at: "2024-01-02T17:20:00Z",
+    created_by: "user15",
+    voters: [],
     notes: "Interesting concept but requires extensive accessibility testing. Will revisit when resources allow."
   }
 ];
 
 const Index = () => {
-  const [ideas, setIdeas] = useState<Idea[]>(mockIdeas);
+  const [ideas, setIdeas] = useState<IdeaWithVotes[]>(mockIdeas);
   const { votedIdeas, remainingVotes, voteForIdea, getQuarterInfo } = useVotingSystem();
 
-  const handleSubmitIdea = (newIdeaData: Omit<Idea, "id" | "votes" | "submittedAt" | "status">) => {
-    const newIdea: Idea = {
+  const handleSubmitIdea = (newIdeaData: Omit<IdeaWithVotes, "id" | "votes" | "created_at" | "status">) => {
+    const newIdea: IdeaWithVotes = {
       ...newIdeaData,
       id: Date.now().toString(),
       votes: 1, // Auto-vote for your own idea
-      submittedAt: new Date().toISOString(),
-      status: "Under Review"
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      created_by: "mock-user-id",
+      status: "Under Review",
+      voters: [],
+      submitted_by: null,
+      submitted_by_company: null,
+      notes: null
     };
 
     setIdeas(prevIdeas => [newIdea, ...prevIdeas]);

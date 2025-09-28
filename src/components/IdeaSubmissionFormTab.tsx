@@ -9,8 +9,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Lightbulb, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+import { type IdeaWithVotes } from "@/lib/supabase";
+
 interface IdeaSubmissionFormTabProps {
-  onSubmit: (idea: Omit<import("./IdeaCard").Idea, "id" | "votes" | "submittedAt" | "status">) => void;
+  onSubmit: (idea: Omit<IdeaWithVotes, "id" | "votes" | "created_at" | "status">) => void;
 }
 
 const categories = [
@@ -29,8 +31,13 @@ export function IdeaSubmissionFormTab({ onSubmit }: IdeaSubmissionFormTabProps) 
     title: "",
     description: "",
     category: "",
-    usageFrequency: "High" as "High" | "Low",
-    submittedBy: "John Doe" // In real app, this would come from auth
+    usage_frequency: "High" as "High" | "Low",
+    notes: null,
+    created_by: "mock-user-id",
+    updated_at: new Date().toISOString(),
+    voters: [],
+    submitted_by: null,
+    submitted_by_company: null
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -62,8 +69,13 @@ export function IdeaSubmissionFormTab({ onSubmit }: IdeaSubmissionFormTabProps) 
         title: "",
         description: "",
         category: "",
-        usageFrequency: "High",
-        submittedBy: "John Doe"
+        usage_frequency: "High",
+        notes: null,
+        created_by: "mock-user-id",
+        updated_at: new Date().toISOString(),
+        voters: [],
+        submitted_by: null,
+        submitted_by_company: null
       });
       
       setIsSubmitting(false);
@@ -133,8 +145,8 @@ export function IdeaSubmissionFormTab({ onSubmit }: IdeaSubmissionFormTabProps) 
             <div className="space-y-3">
               <Label className="text-sm font-medium">Usage Frequency</Label>
               <RadioGroup
-                value={formData.usageFrequency}
-                onValueChange={(value: "High" | "Low") => setFormData({ ...formData, usageFrequency: value })}
+                value={formData.usage_frequency}
+                onValueChange={(value: "High" | "Low") => setFormData({ ...formData, usage_frequency: value })}
                 className="flex gap-6"
               >
                 <div className="flex items-center space-x-2">
