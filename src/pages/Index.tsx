@@ -1,20 +1,17 @@
 import { useState } from "react";
 import { IdeaDashboard } from "@/components/IdeaDashboard";
 import { IdeaSubmissionFormTab } from "@/components/IdeaSubmissionFormTab";
-import { AuthModal } from "@/components/AuthModal";
 import { useIdeas } from "@/hooks/useIdeas";
 import { useVoting } from "@/hooks/useVoting";
 import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Lightbulb, Github, Twitter, Plus, List, LogIn, LogOut } from "lucide-react";
+import { Lightbulb, Github, Twitter, Plus, List } from "lucide-react";
 
 // Remove the mock data as we're now using real Supabase data
 
 const Index = () => {
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("submit");
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const { ideas, loading: ideasLoading, submitIdea } = useIdeas();
   const { 
     remainingVotes, 
@@ -31,11 +28,6 @@ const Index = () => {
     category: string;
     usage_frequency: 'High' | 'Low';
   }) => {
-    if (!user) {
-      setIsAuthModalOpen(true);
-      return;
-    }
-
     await submitIdea({
       title: ideaData.title,
       description: ideaData.description,
@@ -45,16 +37,10 @@ const Index = () => {
   };
 
   const handleVoteForIdea = async (ideaId: string) => {
-    if (!user) {
-      setIsAuthModalOpen(true);
-      return;
-    }
-
     return await voteForIdea(ideaId);
   };
 
   const handleUnvoteForIdea = async (ideaId: string) => {
-    if (!user) return false;
     return await unvoteForIdea(ideaId);
   };
 
@@ -97,20 +83,7 @@ const Index = () => {
             </div>
             
             <div className="flex items-center gap-2">
-              {user ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Welcome, {user.email}</span>
-                  <Button variant="outline" size="sm" onClick={signOut}>
-                    <LogOut className="h-4 w-4 mr-1" />
-                    Sign Out
-                  </Button>
-                </div>
-              ) : (
-                <Button variant="outline" size="sm" onClick={() => setIsAuthModalOpen(true)}>
-                  <LogIn className="h-4 w-4 mr-1" />
-                  Sign In
-                </Button>
-              )}
+              <span className="text-sm text-muted-foreground">Welcome, {user?.email || 'User'}</span>
             </div>
           </div>
         </div>
@@ -154,11 +127,6 @@ const Index = () => {
           </TabsContent>
         </Tabs>
       </main>
-
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
-        onClose={() => setIsAuthModalOpen(false)} 
-      />
 
       {/* Footer */}
       <footer className="border-t border-border bg-card/30 mt-16">
