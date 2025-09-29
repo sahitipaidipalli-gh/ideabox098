@@ -116,13 +116,12 @@
 /* Custom component styles using design system */
 @layer components {
   .idea-card {
-    background: var(--gradient-card);
-    box-shadow: var(--shadow-card);
+    @apply bg-card border border-border shadow-sm;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .idea-card:hover {
-    box-shadow: var(--shadow-card-hover);
+    @apply shadow-md;
     transform: translateY(-2px);
   }
 
