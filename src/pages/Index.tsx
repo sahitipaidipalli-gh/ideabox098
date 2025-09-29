@@ -13,6 +13,7 @@ import { Lightbulb, Github, Twitter, Plus, List, LogIn, LogOut } from "lucide-re
 
 const Index = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("submit");
   const { user, signOut } = useAuth();
   const { ideas, loading: ideasLoading, submitIdea } = useIdeas();
   const { 
@@ -117,7 +118,7 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="submit" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-8">
             <TabsTrigger value="submit" className="flex items-center gap-2 bg-primary/10 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Plus className="h-4 w-4" />
@@ -148,7 +149,7 @@ const Index = () => {
               onUnvoteForIdea={handleUnvoteForIdea}
               votedIdeas={new Set(userVotes)}
               remainingVotes={remainingVotes}
-              onOpenSubmissionForm={() => {}}
+              onOpenSubmissionForm={() => setActiveTab("submit")}
             />
           </TabsContent>
         </Tabs>
