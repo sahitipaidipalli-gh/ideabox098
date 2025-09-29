@@ -1,4 +1,5 @@
-export { supabase } from '@/integrations/supabase/client'
+import { supabase as _supabase } from '@/integrations/supabase/client'
+export const supabase = _supabase as any
 export type { Database } from '@/integrations/supabase/types'
 
 export type IdeaWithVotes = {
