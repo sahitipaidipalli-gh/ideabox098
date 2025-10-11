@@ -14,13 +14,158 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ideas: {
+        Row: {
+          category: string
+          created_at: string | null
+          created_by: string | null
+          description: string
+          id: string
+          notes: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+          usage_frequency: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          created_by?: string | null
+          description: string
+          id?: string
+          notes?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          usage_frequency: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string
+          id?: string
+          notes?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          usage_frequency?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ideas_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          company_name: string | null
+          created_at: string | null
+          email: string
+          full_name: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string | null
+          email: string
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      votes: {
+        Row: {
+          created_at: string | null
+          id: string
+          idea_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          idea_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          idea_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votes_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: false
+            referencedRelation: "ideas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "votes_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: false
+            referencedRelation: "ideas_with_votes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      ideas_with_votes: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string | null
+          notes: string | null
+          status: string | null
+          submitted_by: string | null
+          submitted_by_company: string | null
+          title: string | null
+          updated_at: string | null
+          usage_frequency: string | null
+          voters: Json | null
+          votes: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ideas_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
-      [_ in never]: never
+      get_user_votes_remaining: {
+        Args: { user_uuid: string }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never
