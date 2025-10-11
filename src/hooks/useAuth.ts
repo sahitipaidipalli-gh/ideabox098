@@ -3,24 +3,45 @@ import { User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 import { useToast } from '@/hooks/use-toast'
 
+// Demo user ID for demo purposes
+const DEMO_USER_ID = '00000000-0000-0000-0000-000000000099'
+
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const { toast } = useToast()
 
   useEffect(() => {
-    // Get initial session
+    // For demo purposes, create a mock user object
+    const demoUser: User = {
+      id: DEMO_USER_ID,
+      email: 'demo@demo.com',
+      app_metadata: {},
+      user_metadata: { full_name: 'Demo User', company_name: 'Demo Company' },
+      aud: 'authenticated',
+      created_at: new Date().toISOString(),
+    } as User
+
+    // Set demo user immediately
+    setUser(demoUser)
+    setLoading(false)
+
+    // Also check for real session in case user wants to authenticate
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
+      if (session?.user) {
+        setUser(session.user)
+      }
     })
 
     // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
+      if (session?.user) {
+        setUser(session.user)
+      } else {
+        setUser(demoUser)
+      }
     })
 
     return () => subscription.unsubscribe()
