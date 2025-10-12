@@ -94,6 +94,9 @@ export function useVoting() {
         description: "Your vote has been recorded successfully!",
       })
 
+      // Trigger refetch to update vote counts
+      setTimeout(() => fetchVotingData(), 100)
+
       return true
     } catch (error: any) {
       toast({
@@ -134,6 +137,9 @@ export function useVoting() {
         title: "Vote Removed",
         description: "Your vote has been removed successfully!",
       })
+
+      // Trigger refetch to update vote counts
+      setTimeout(() => fetchVotingData(), 100)
 
       return true
     } catch (error: any) {

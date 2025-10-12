@@ -12,7 +12,7 @@ import { Lightbulb, Github, Twitter, Plus, List } from "lucide-react";
 const Index = () => {
   const [activeTab, setActiveTab] = useState("submit");
   const { user } = useAuth();
-  const { ideas, loading: ideasLoading, submitIdea } = useIdeas();
+  const { ideas, loading: ideasLoading, submitIdea, refetch } = useIdeas();
   const { 
     remainingVotes, 
     userVotes, 
@@ -37,11 +37,15 @@ const Index = () => {
   };
 
   const handleVoteForIdea = async (ideaId: string) => {
-    return await voteForIdea(ideaId);
+    const result = await voteForIdea(ideaId);
+    await refetch();
+    return result;
   };
 
   const handleUnvoteForIdea = async (ideaId: string) => {
-    return await unvoteForIdea(ideaId);
+    const result = await unvoteForIdea(ideaId);
+    await refetch();
+    return result;
   };
 
   const quarterInfo = getQuarterInfo();
