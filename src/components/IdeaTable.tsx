@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowUp, Clock, User, Tag, ChevronDown, ChevronUp, Search, Plus } from "lucide-react";
+import { ArrowUp, Clock, User, Tag, ChevronDown, ChevronUp, Search, Plus, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { type IdeaWithVotes } from "@/lib/supabase";
 
@@ -77,12 +77,13 @@ export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes,
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/30">
-            <TableHead className="w-[40%]">Idea</TableHead>
-            <TableHead className="w-[12%]">Category</TableHead>
-            <TableHead className="w-[15%]">Status</TableHead>
+            <TableHead className="w-[35%]">Idea</TableHead>
+            <TableHead className="w-[10%]">Category</TableHead>
+            <TableHead className="w-[13%]">Status</TableHead>
             <TableHead className="w-[8%] text-center">Votes</TableHead>
-            <TableHead className="w-[10%]">Frequency</TableHead>
-            <TableHead className="w-[15%]">Submitted</TableHead>
+            <TableHead className="w-[9%]">Frequency</TableHead>
+            <TableHead className="w-[13%]">Submitted</TableHead>
+            <TableHead className="w-[12%] text-center">Create Jira</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -187,6 +188,18 @@ export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes,
                        <span>{new Date(idea.created_at).toLocaleDateString()}</span>
                      </div>
                   </div>
+                </TableCell>
+                
+                <TableCell className="text-center">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2"
+                    onClick={() => console.log('Create Jira ticket for:', idea.title)}
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                    Create
+                  </Button>
                 </TableCell>
               </TableRow>
             );
