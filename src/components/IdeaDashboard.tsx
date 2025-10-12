@@ -245,6 +245,13 @@ export function IdeaDashboard({ ideas, onVoteForIdea, onUnvoteForIdea, votedIdea
         <IdeaTable
           ideas={filteredAndSortedIdeas}
           onVote={onVoteForIdea}
+          onUnvote={async (ideaId) => {
+            if (onUnvoteForIdea) {
+              const result = await onUnvoteForIdea(ideaId);
+              return result !== false;
+            }
+            return false;
+          }}
           votedIdeas={votedIdeas}
           remainingVotes={remainingVotes}
           onOpenSubmissionForm={onOpenSubmissionForm}

@@ -9,6 +9,7 @@ import { type IdeaWithVotes } from "@/lib/supabase";
 interface IdeaTableProps {
   ideas: IdeaWithVotes[];
   onVote: (ideaId: string) => Promise<boolean | void>;
+  onUnvote: (ideaId: string) => Promise<boolean | void>;
   votedIdeas: Set<string>;
   remainingVotes: number;
   onOpenSubmissionForm?: () => void;
@@ -25,7 +26,7 @@ const statusConfig = {
   "Will be revisited later": { color: "bg-status-revisit text-white", icon: "🔄" }
 };
 
-export function IdeaTable({ ideas, onVote, votedIdeas, remainingVotes, onOpenSubmissionForm, searchTerm, statusFilter, categoryFilter }: IdeaTableProps) {
+export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes, onOpenSubmissionForm, searchTerm, statusFilter, categoryFilter }: IdeaTableProps) {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [votingStates, setVotingStates] = useState<Set<string>>(new Set());
 
@@ -40,17 +41,34 @@ export function IdeaTable({ ideas, onVote, votedIdeas, remainingVotes, onOpenSub
   };
 
   const handleVote = async (ideaId: string) => {
-    if (votedIdeas.has(ideaId) || remainingVotes <= 0) return;
+    const hasVoted = votedIdeas.has(ideaId);
     
-    setVotingStates(prev => new Set(prev).add(ideaId));
-    try {
-      await onVote(ideaId);
-    } finally {
-      setVotingStates(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(ideaId);
-        return newSet;
-      });
+    if (hasVoted) {
+      // Unvote
+      setVotingStates(prev => new Set(prev).add(ideaId));
+      try {
+        await onUnvote(ideaId);
+      } finally {
+        setVotingStates(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(ideaId);
+          return newSet;
+        });
+      }
+    } else {
+      // Vote
+      if (remainingVotes <= 0) return;
+      
+      setVotingStates(prev => new Set(prev).add(ideaId));
+      try {
+        await onVote(ideaId);
+      } finally {
+        setVotingStates(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(ideaId);
+          return newSet;
+        });
+      }
     }
   };
 
@@ -135,10 +153,10 @@ export function IdeaTable({ ideas, onVote, votedIdeas, remainingVotes, onOpenSub
                     variant="outline"
                     size="sm"
                     onClick={() => handleVote(idea.id)}
-                    disabled={hasVoted || remainingVotes <= 0 || isVoting}
+                    disabled={(!hasVoted && remainingVotes <= 0) || isVoting}
                     className={`vote-button flex flex-col items-center gap-1 px-2 py-1 h-auto min-w-[50px] ${
                       hasVoted 
-                        ? 'bg-primary text-primary-foreground border-primary' 
+                        ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90' 
                         : 'hover:bg-primary/10 hover:border-primary/50'
                     }`}
                   >
@@ -156,8 +174,13 @@ export function IdeaTable({ ideas, onVote, votedIdeas, remainingVotes, onOpenSub
                 <TableCell>
                   <div className="text-sm space-y-1">
                      <div className="flex items-center gap-1 text-muted-foreground">
-                       <User className="h-3 w-3" />
-                       <span className="truncate">{idea.submitted_by || 'Anonymous'}</span>
+                       <User className="h-3 w-3 flex-shrink-0" />
+                       <div className="min-w-0">
+                         <div className="truncate font-medium">{idea.submitted_by || 'Anonymous'}</div>
+                         {idea.submitted_by_company && (
+                           <div className="truncate text-xs opacity-70">{idea.submitted_by_company}</div>
+                         )}
+                       </div>
                      </div>
                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
                        <Clock className="h-3 w-3" />
