@@ -79,7 +79,7 @@ export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes,
           <TableRow className="bg-muted/30">
             <TableHead className="w-[35%]">Idea</TableHead>
             <TableHead className="w-[10%]">Category</TableHead>
-            <TableHead className="w-[13%]">Status</TableHead>
+            <TableHead className="w-[13%] text-center">Status</TableHead>
             <TableHead className="w-[8%] text-center">Votes</TableHead>
             <TableHead className="w-[9%]">Frequency</TableHead>
             <TableHead className="w-[13%]">Submitted</TableHead>
@@ -135,7 +135,7 @@ export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes,
                   </Badge>
                 </TableCell>
                 
-                <TableCell>
+                <TableCell className="text-center">
                   <Badge className={`status-badge ${statusStyle.color} text-xs`}>
                     <span className="hidden sm:inline">{idea.status}</span>
                     <span className="sm:hidden">
