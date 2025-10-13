@@ -165,20 +165,31 @@ export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes,
                 </TableCell>
                 
                 <TableCell className="text-center">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleVote(idea.id)}
-                    disabled={(!hasVoted && remainingVotes <= 0) || isVoting}
-                    className={`vote-button flex flex-col items-center gap-1 px-2 py-1 h-auto min-w-[50px] ${
-                      hasVoted 
-                        ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90' 
-                        : 'hover:bg-primary/10 hover:border-primary/50'
-                    }`}
-                  >
-                    <ArrowUp className={`h-3 w-3 ${isVoting ? 'animate-bounce' : ''}`} />
-                    <span className="text-xs font-medium">{idea.votes}</span>
-                  </Button>
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="flex items-center gap-2">
+                      <ArrowUp className="h-4 w-4 text-primary" />
+                      <span className="text-lg font-bold">{idea.votes}</span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleVote(idea.id)}
+                      disabled={(!hasVoted && remainingVotes <= 0) || isVoting}
+                      className={`${
+                        hasVoted 
+                          ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90' 
+                          : 'hover:bg-primary/10 hover:border-primary/50'
+                      }`}
+                    >
+                      {isVoting ? (
+                        <span className="text-xs">...</span>
+                      ) : (
+                        <span className="text-xs whitespace-nowrap">
+                          {hasVoted ? 'Remove Vote' : 'Vote for this Idea'}
+                        </span>
+                      )}
+                    </Button>
+                  </div>
                 </TableCell>
                 
                 <TableCell>
