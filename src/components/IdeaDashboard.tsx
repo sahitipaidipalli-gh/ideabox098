@@ -63,23 +63,6 @@ export function IdeaDashboard({ ideas, onVoteForIdea, onUnvoteForIdea, votedIdea
 
   return (
     <div className="space-y-6">
-      {/* Header with Stats */}
-      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Idea Box
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Community-driven innovation hub • {remainingVotes} votes remaining this quarter
-          </p>
-        </div>
-        
-        <Button onClick={onOpenSubmissionForm} className="bg-primary hover:bg-primary-dark">
-          <Plus className="h-4 w-4 mr-2" />
-          Submit New Idea
-        </Button>
-      </div>
-
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="p-4">
