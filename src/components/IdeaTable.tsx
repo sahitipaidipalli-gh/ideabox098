@@ -137,7 +137,6 @@ export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes,
                 
                 <TableCell>
                   <Badge className={`status-badge ${statusStyle.color} text-xs`}>
-                    <span className="mr-1">{statusStyle.icon}</span>
                     <span className="hidden sm:inline">{idea.status}</span>
                     <span className="sm:hidden">
                       {idea.status === "Under Review" ? "Review" :
