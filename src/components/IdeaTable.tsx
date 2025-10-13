@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { ArrowUp, Clock, User, Tag, ChevronDown, ChevronUp, Search, Plus, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { type IdeaWithVotes } from "@/lib/supabase";
+import { IdeaDetailsDialog } from "./IdeaDetailsDialog";
 
 interface IdeaTableProps {
   ideas: IdeaWithVotes[];
@@ -29,6 +30,7 @@ const statusConfig = {
 export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes, onOpenSubmissionForm, searchTerm, statusFilter, categoryFilter }: IdeaTableProps) {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [votingStates, setVotingStates] = useState<Set<string>>(new Set());
+  const [selectedIdea, setSelectedIdea] = useState<IdeaWithVotes | null>(null);
 
   const toggleRowExpansion = (ideaId: string) => {
     const newExpanded = new Set(expandedRows);
@@ -73,8 +75,19 @@ export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes,
   };
 
   return (
-    <div className="border rounded-lg overflow-hidden bg-card">
-      <Table>
+    <>
+      <IdeaDetailsDialog
+        idea={selectedIdea}
+        isOpen={!!selectedIdea}
+        onClose={() => setSelectedIdea(null)}
+        onVote={handleVote}
+        onUnvote={handleVote}
+        hasVoted={selectedIdea ? votedIdeas.has(selectedIdea.id) : false}
+        remainingVotes={remainingVotes}
+      />
+      
+      <div className="border rounded-lg overflow-hidden bg-card">
+        <Table>
         <TableHeader>
           <TableRow className="bg-muted/30">
             <TableHead className="w-[35%]">Idea</TableHead>
@@ -110,7 +123,10 @@ export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes,
                         }
                       </Button>
                       <div className="min-w-0 flex-1">
-                        <h3 className="font-semibold text-base group-hover:text-primary transition-colors leading-tight">
+                        <h3 
+                          className="font-semibold text-base group-hover:text-primary transition-colors leading-tight cursor-pointer underline decoration-transparent hover:decoration-primary underline-offset-2"
+                          onClick={() => setSelectedIdea(idea)}
+                        >
                           {idea.title}
                         </h3>
                         <p className={`text-muted-foreground text-sm mt-1 transition-all duration-200 ${
@@ -227,6 +243,7 @@ export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes,
           </div>
         </Card>
       )}
-    </div>
+      </div>
+    </>
   );
 }
