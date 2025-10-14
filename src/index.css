@@ -20,17 +20,12 @@
     --secondary-light: 140 50% 70%;
     --secondary-foreground: 0 0% 100%;
 
-    /* Status colors for idea workflow - vibrant and distinct */
-    --status-review: 250 70% 60%;      /* Purple */
-    --status-planned: 35 95% 55%;      /* Orange */
-    --status-progress: 210 95% 55%;    /* Blue */
-    --status-released: 140 60% 45%;    /* Green */
-    --status-revisit: 280 40% 55%;     /* Muted purple */
-    
-    /* Frequency colors */
-    --frequency-high: 0 85% 60%;       /* Red/urgent */
-    --frequency-medium: 35 90% 55%;    /* Orange */
-    --frequency-low: 200 60% 55%;      /* Blue */
+    /* Status colors for idea workflow */
+    --status-review: 210 15% 65%;
+    --status-planned: 45 90% 65%;
+    --status-progress: 200 70% 60%;
+    --status-released: 140 50% 50%;
+    --status-revisit: 210 15% 55%;
 
     /* Enhanced semantic tokens */
     --card: 0 0% 100%;
@@ -139,16 +134,6 @@
   }
 
   .status-badge {
-    @apply px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase shadow-sm;
-    transition: all 0.2s ease;
-  }
-  
-  .status-badge:hover {
-    @apply shadow-md;
-    transform: translateY(-1px);
-  }
-  
-  .frequency-badge {
-    @apply px-2.5 py-1 rounded-md text-xs font-bold uppercase;
+    @apply px-3 py-1 rounded-full text-sm font-medium;
   }
 }
