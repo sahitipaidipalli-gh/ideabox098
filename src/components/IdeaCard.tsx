@@ -24,7 +24,7 @@ const statusConfig = {
 
 export function IdeaCard({ idea, onVote, onUnvote, hasVotedFor, remainingVotes }: IdeaCardProps) {
   const [isVoting, setIsVoting] = useState(false);
-  const statusStyle = statusConfig[idea.status];
+  const statusStyle = statusConfig[idea.status] || { color: "bg-muted text-muted-foreground", icon: "📝" };
 
   const handleVote = async () => {
     setIsVoting(true);

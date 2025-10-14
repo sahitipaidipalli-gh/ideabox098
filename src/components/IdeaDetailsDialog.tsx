@@ -37,7 +37,7 @@ export function IdeaDetailsDialog({
   
   if (!idea) return null;
 
-  const statusStyle = statusConfig[idea.status];
+  const statusStyle = statusConfig[idea.status] || { color: "bg-muted text-muted-foreground", icon: "📝" };
   
   // Parse voters data
   const voters = idea.voters ? (Array.isArray(idea.voters) ? idea.voters : []) : [];

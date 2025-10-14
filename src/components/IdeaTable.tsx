@@ -104,7 +104,7 @@ export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes,
             const isExpanded = expandedRows.has(idea.id);
             const hasVoted = votedIdeas.has(idea.id);
             const isVoting = votingStates.has(idea.id);
-            const statusStyle = statusConfig[idea.status];
+            const statusStyle = statusConfig[idea.status] || { color: "bg-muted text-muted-foreground", icon: "📝" };
 
             return (
               <TableRow key={idea.id} className="group hover:bg-muted/20 transition-colors">
