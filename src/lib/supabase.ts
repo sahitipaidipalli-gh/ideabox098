@@ -8,7 +8,7 @@ export type IdeaWithVotes = {
   description: string
   category: string
   usage_frequency: 'High' | 'Low'
-  status: 'Under Review' | 'Planned in Q4' | 'Development In Progress' | 'Released' | 'Will be revisited later'
+  status: 'Under Review' | 'Planned' | 'Development In Progress' | 'Released' | 'Will be revisited later'
   notes: string | null
   created_by: string
   created_at: string

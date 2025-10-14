@@ -16,7 +16,7 @@ interface IdeaCardProps {
 
 const statusConfig = {
   "Under Review": { color: "bg-status-review text-white", icon: "🔍" },
-  "Planned in Q4": { color: "bg-status-planned text-white", icon: "📅" },
+  "Planned": { color: "bg-status-planned text-white", icon: "📅" },
   "Development In Progress": { color: "bg-status-progress text-white", icon: "⚡" },
   "Released": { color: "bg-status-released text-white", icon: "✅" },
   "Will be revisited later": { color: "bg-status-revisit text-white", icon: "🔄" }
