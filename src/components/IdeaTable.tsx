@@ -171,15 +171,10 @@ export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes,
                       <span className="text-lg font-bold">{idea.votes}</span>
                     </div>
                     <Button
-                      variant="outline"
+                      variant={hasVoted ? "outline" : "default"}
                       size="sm"
                       onClick={() => handleVote(idea.id)}
                       disabled={(!hasVoted && remainingVotes <= 0) || isVoting}
-                      className={`${
-                        hasVoted 
-                          ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90' 
-                          : 'hover:bg-primary/10 hover:border-primary/50'
-                      }`}
                     >
                       {isVoting ? (
                         <span className="text-xs">...</span>

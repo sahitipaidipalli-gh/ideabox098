@@ -132,9 +132,7 @@ export function IdeaDetailsDialog({
                 <Button
                   onClick={handleVoteClick}
                   disabled={!hasVoted && remainingVotes <= 0}
-                  className={hasVoted 
-                    ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
-                    : ''}
+                  variant={hasVoted ? "outline" : "default"}
                 >
                   <ArrowUp className="h-4 w-4 mr-2" />
                   {hasVoted ? 'Remove Vote' : 'Vote for this Idea'}
