@@ -20,11 +20,17 @@ interface IdeaTableProps {
 }
 
 const statusConfig = {
-  "Under Review": { color: "bg-status-review text-white", icon: "🔍" },
-  "Planned in Q4": { color: "bg-status-planned text-white", icon: "📅" },
-  "Development In Progress": { color: "bg-status-progress text-white", icon: "⚡" },
-  "Released": { color: "bg-status-released text-white", icon: "✅" },
-  "Will be revisited later": { color: "bg-status-revisit text-white", icon: "🔄" }
+  "Under Review": { color: "bg-status-review text-white shadow-sm", icon: "🔍" },
+  "Planned in Q4": { color: "bg-status-planned text-white shadow-sm", icon: "📅" },
+  "Development In Progress": { color: "bg-status-progress text-white shadow-sm", icon: "⚡" },
+  "Released": { color: "bg-status-released text-white shadow-sm", icon: "✅" },
+  "Will be revisited later": { color: "bg-status-revisit text-white shadow-sm", icon: "🔄" }
+};
+
+const frequencyConfig = {
+  "High": { color: "bg-frequency-high text-white", label: "High Priority" },
+  "Medium": { color: "bg-frequency-medium text-white", label: "Medium" },
+  "Low": { color: "bg-frequency-low text-white", label: "Low" }
 };
 
 export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes, onOpenSubmissionForm, searchTerm, statusFilter, categoryFilter }: IdeaTableProps) {
@@ -105,6 +111,7 @@ export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes,
             const hasVoted = votedIdeas.has(idea.id);
             const isVoting = votingStates.has(idea.id);
             const statusStyle = statusConfig[idea.status];
+            const frequencyStyle = frequencyConfig[idea.usage_frequency as keyof typeof frequencyConfig] || frequencyConfig["Medium"];
 
             return (
               <TableRow key={idea.id} className="group hover:bg-muted/20 transition-colors">
@@ -188,8 +195,8 @@ export function IdeaTable({ ideas, onVote, onUnvote, votedIdeas, remainingVotes,
                 </TableCell>
                 
                 <TableCell>
-                  <Badge variant={idea.usage_frequency === "High" ? "default" : "secondary"} className="text-xs">
-                    {idea.usage_frequency}
+                  <Badge className={`frequency-badge ${frequencyStyle.color}`}>
+                    {frequencyStyle.label}
                   </Badge>
                 </TableCell>
                 
