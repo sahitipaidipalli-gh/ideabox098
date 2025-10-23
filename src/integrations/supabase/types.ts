@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      comments: {
+        Row: {
+          comment_text: string
+          created_at: string
+          id: string
+          idea_id: string
+          user_id: string
+        }
+        Insert: {
+          comment_text: string
+          created_at?: string
+          id?: string
+          idea_id: string
+          user_id: string
+        }
+        Update: {
+          comment_text?: string
+          created_at?: string
+          id?: string
+          idea_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: false
+            referencedRelation: "ideas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: false
+            referencedRelation: "ideas_with_votes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ideas: {
         Row: {
           category: string
@@ -162,10 +201,7 @@ export type Database = {
       }
     }
     Functions: {
-      get_user_votes_remaining: {
-        Args: { user_uuid: string }
-        Returns: number
-      }
+      get_user_votes_remaining: { Args: { user_uuid: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never
