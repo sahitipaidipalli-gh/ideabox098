@@ -44,13 +44,6 @@ export function IdeaDetailsDialog({
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isLoadingComments, setIsLoadingComments] = useState(false);
   const { user } = useAuth();
-  
-  if (!idea) return null;
-
-  const statusStyle = statusConfig[idea.status] || { color: "bg-muted text-muted-foreground", icon: "📝" };
-  
-  // Parse voters data
-  const voters = idea.voters ? (Array.isArray(idea.voters) ? idea.voters : []) : [];
 
   // Fetch comments when dialog opens
   useEffect(() => {
@@ -58,6 +51,13 @@ export function IdeaDetailsDialog({
       fetchComments();
     }
   }, [isOpen, idea?.id]);
+
+  if (!idea) return null;
+
+  const statusStyle = statusConfig[idea.status] || { color: "bg-muted text-muted-foreground", icon: "📝" };
+  
+  // Parse voters data
+  const voters = idea.voters ? (Array.isArray(idea.voters) ? idea.voters : []) : [];
 
   const fetchComments = async () => {
     if (!idea) return;
