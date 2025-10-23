@@ -44,6 +44,16 @@ export function IdeaDetailsDialog({
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isLoadingComments, setIsLoadingComments] = useState(false);
   const { user } = useAuth();
+  const [hasSession, setHasSession] = useState(false);
+  useEffect(() => {
+    let unsubscribe = () => {};
+    supabase.auth.getSession().then(({ data: { session } }) => setHasSession(!!session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setHasSession(!!session);
+    });
+    unsubscribe = () => subscription.unsubscribe();
+    return () => unsubscribe();
+  }, []);
 
   // Fetch comments when dialog opens
   useEffect(() => {
@@ -92,7 +102,9 @@ export function IdeaDetailsDialog({
       return;
     }
 
-    if (!user) {
+    // Require an active Supabase session for RLS to pass
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
       toast.error('Please sign in to comment');
       return;
     }
@@ -103,7 +115,7 @@ export function IdeaDetailsDialog({
         .from('comments')
         .insert({
           idea_id: idea.id,
-          user_id: user.id,
+          user_id: session.user.id,
           comment_text: newComment.trim()
         });
 
@@ -111,6 +123,7 @@ export function IdeaDetailsDialog({
 
       toast.success('Comment added successfully');
       setNewComment('');
+      // Refresh comments list
       fetchComments();
     } catch (error) {
       console.error('Error submitting comment:', error);
@@ -273,15 +286,15 @@ export function IdeaDetailsDialog({
               {/* Add Comment Form */}
               <Card className="p-4 mb-4">
                 <Textarea
-                  placeholder={user ? "Add a comment..." : "Sign in to add a comment"}
+                  placeholder={hasSession ? "Add a comment..." : "Sign in to add a comment"}
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  disabled={!user || isSubmittingComment}
+                  disabled={!hasSession || isSubmittingComment}
                   className="mb-3 min-h-[80px]"
                 />
                 <Button
                   onClick={handleSubmitComment}
-                  disabled={!user || isSubmittingComment || !newComment.trim()}
+                  disabled={!hasSession || isSubmittingComment || !newComment.trim()}
                   className="w-full sm:w-auto"
                 >
                   <Send className="h-4 w-4 mr-2" />
